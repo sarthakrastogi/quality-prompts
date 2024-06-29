@@ -1,24 +1,42 @@
 from pydantic import BaseModel
-from .utils.llm import llm_call
-from .exemplars import ExemplarStore
 import warnings
+from typing import List
+
+from .utils.llm import llm_call
+from .exemplars import ExemplarStore, Exemplar
 
 
 class QualityPrompt(BaseModel):
     directive: str  # Core intent of the prompt
     output_formatting: str
+    additional_information: str
     style_instructions: str = ""
     role_instructions: str = ""
     emotion_instructions: str = ""
-    additional_information: str
     exemplar_store: ExemplarStore = ExemplarStore(exemplars=[])
+    few_shot_examples: List[Exemplar] = []
+
+    def prepare(self):
+        formatted_examples = [
+            f"Example input: {e.input}\nExample output: {e.label}\n"
+            for e in self.few_shot_examples
+        ]
+
+        return f"""{self.directive}
+        {self.additional_information}
+        {"\n".join(formatted_examples)}
+        {self.output_formatting}
+        """
 
     def few_shot(self, input_text, n_shots=3):
         if len(self.exemplar_store.exemplars) > n_shots:
-            shots = self.exemplar_store.knn(input_text=input_text, k=n_shots)
+            self.few_shot_examples = (
+                self.exemplar_store.get_similar_exemplars_to_test_sample(
+                    input_text=input_text, k=n_shots
+                )
+            )
         else:
-            shots = self.exemplar_store.exemplars
-        return shots
+            self.few_shot_examples = self.exemplar_store.exemplars
 
     def zero_shot(self):
         shots = []

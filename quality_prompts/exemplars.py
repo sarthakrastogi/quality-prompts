@@ -9,7 +9,7 @@ from .utils.llm import get_embedding
 class Exemplar(BaseModel):
     input: str
     label: str
-    input_embedding: List[float] = []
+    input_embedding: List[float]
 
 
 class ExemplarStore(BaseModel):
