@@ -16,15 +16,17 @@ class QualityPrompt(BaseModel):
     exemplar_store: ExemplarStore = ExemplarStore(exemplars=[])
     few_shot_examples: List[Exemplar] = []
 
-    def prepare(self):
-        formatted_examples = [
-            f"Example input: {e.input}\nExample output: {e.label}\n"
-            for e in self.few_shot_examples
-        ]
+    def compile(self):
+        formatted_examples = "\n".join(
+            [
+                f"Example input: {e.input}\nExample output: {e.label}\n"
+                for e in self.few_shot_examples
+            ]
+        )
 
         return f"""{self.directive}
         {self.additional_information}
-        {"\n".join(formatted_examples)}
+        {formatted_examples}
         {self.output_formatting}
         """
 

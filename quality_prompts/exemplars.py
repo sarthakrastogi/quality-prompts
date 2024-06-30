@@ -23,6 +23,7 @@ class ExemplarStore(BaseModel):
     ):
         """
         If there are a large number of exemplars, the ones best-matching to the user's query can be actually included for few-shot prompting.
+        https://arxiv.org/abs/2101.06804
         """
 
         input_embedding = get_embedding(input_text)

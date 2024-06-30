@@ -3,10 +3,10 @@
 utils/__pycache__
 core/__pycache__
 examples/__pycache__
-quality-prompts/__pycache__
+quality_prompts/__pycache__
 __pycache__
 .gitmodules
 usage.ipynb
 build/
 dist/
-quality-prompts.egg-info/
+quality_prompts.egg-info/

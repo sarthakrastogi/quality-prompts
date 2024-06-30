@@ -1,48 +1,66 @@
-# 🌌 Nebulous AI
-## Create AI agents for your own use case quickly.
+# Write Quality Prompts
+## Use and evaluate prompting techniques [surveyed by Openai and Microsoft](https://arxiv.org/pdf/2406.06608) quickly.
 
-AI agents are the future of automation and LLMs. Nebulous helps you create agents:
-* For your own business use case
-* In just 5 lines of code
-* By using the best agent algorithms 
+### 1. Install Quality Prompts:
 
+`pip install quality-prompts`
 
-It's easy to learn and get started with. Ready to create your first agent in just 5 lines of code? [Learn how.](https://github.com/sarthakrastogi/nebulousai/tree/main?tab=readme-ov-file#create-ai-agents-with-top-performing-algorithms-quickly)
-
-### 1. Install Nebulous AI:
-
-`pip install nebulousai`
-
-### 2. Create an agent:
+### 2. Write down few-shot examples:
 
 ```
-from nebulousai.core.planning import Planner
-from nebulousai.core.brain import Brain
-from nebulousai.agent import PlannerAgent
-from nebulousai.all_tools import searchWikipediaTool
+from quality_prompts.prompt import QualityPrompt
+from quality_prompts.exemplars import ExemplarStore, Exemplar
+from quality_prompts.utils.llm import get_embedding
 
-brain = Brain(brain_system_prompt="Answer questions by using Wikipedia as a source.")
-planner = Planner(agent_goal="find obama's hobbies")
-
-agent = PlannerAgent(name="wiki_agent",
-              brain=brain,
-              planner=planner)
-
-agent.add_tool(searchWikipediaTool)
+exemplars = [Exemplar(input="Cardiovascular disease (CVD) encompasses..."
+                      label="[{"entity": "cardiovascular disease (cvd)..."
+                      input_embedding=[-0.008424, 0.097374, ...]
+                     ),
+                     ...
+            ]
+exemplar_store = ExemplarStore(exemplars=exemplars)
 ```
 
-### 3. Let the agent plan a task and act on it:
+### 3. Write the components of your prompt
 
 ```
-result = agent.act()
+directive = "You are given a document and your task..."
+additional_information = "In the knowledge graph, entities..."
+output_formatting = "You will respond with a knowledge graph in the given JSON"
+
+prompt = QualityPrompt(
+                        directive=directive,
+                        additional_information=additional_information,
+                        output_formatting=output_formatting,
+                        exemplar_store=exemplar_store
+                       )
+```
+
+### 4. Effortlessly add few-shot examples to your prompt and compile it.
+
+```
+input_text = "list the disorders included in cvd"
+prompt.few_shot(input_text=input_text, n_shots=2)
+print(prompt.compile())
 ```
 
 ```
+>> You are given a document and your task is to create a knowledge graph from it.
+        
+In the knowledge graph, entities such as people, places, objects, institutions, topics, ideas, etc. are represented as nodes.
+Whereas the relationships and actions between them are represented as edges.
 
->> {'tool_name': 'Wikipedia Search', 'arguments': {'search_term': 'Barack Obama'}}
-Performed 'search_wikipedia'.
->> {'tool_name': 'Reason', 'arguments': {'input_text': 'What hobbies does Barack Obama enjoy?'}}
-Performed 'reason'.
+Example input: Cardiovascular disease (CVD) encompasses a spectrum of...
+Example output: [{'entity': 'cardiovascular disease (cvd)', 'connections': ...
 
->> Result: Some of Barack Obama's favorite hobbies include playing basketball, reading, writing, and spending time outdoors. He is also known to be a fan of music and enjoys playing the guitar. Additionally, he has been seen golfing and has a passion for cooking and trying new foods.
+Example input: The epidemiological burden of cardiovascular disease underscores ...
+You will respond with a knowledge graph in the given JSON format:
+
+[
+    {"entity" : "Entity_name", "connections" : [
+        {"entity" : "Connected_entity_1", "relationship" : "Relationship_with_connected_entity_1},
+        {"entity" : "Connected_entity_2", "relationship" : "Relationship_with_connected_entity_2},
+        ]
+    },
+]
 ```
