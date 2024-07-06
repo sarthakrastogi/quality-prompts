@@ -36,11 +36,22 @@ prompt = QualityPrompt(
                        )
 ```
 
-### 4. Effortlessly add few-shot examples to your prompt and compile it.
+### 4. Effortlessly add few-shot examples to your prompt.
 
 ```
 input_text = "list the disorders included in cvd"
 prompt.few_shot(input_text=input_text, n_shots=2)
+```
+
+### 5. Simply call a prompting technique to your prompt
+
+```
+prompt.system2attention(input_text)
+```
+
+### 6. Compile your prompt to use it
+
+```
 print(prompt.compile())
 ```
 

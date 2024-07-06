@@ -3,9 +3,9 @@ import warnings
 from typing import List
 import json
 
-from .utils.llm import llm_call
 from .exemplars import ExemplarStore, Exemplar
-from utils.prompting_techniques_system_prompts import *
+from .utils.llm import llm_call
+from .utils.prompting_techniques_system_prompts import *
 
 
 class QualityPrompt(BaseModel):
@@ -42,25 +42,13 @@ class QualityPrompt(BaseModel):
         else:
             self.few_shot_examples = self.exemplar_store.exemplars
 
-    def zero_shot(self):
-        shots = []
-        if not self.style_instructions:
-            warnings.warn("Warning: 'style_instructions' is not provided.", UserWarning)
-        if not self.role_instructions:
-            warnings.warn("Warning: 'role_instructions' is not provided.", UserWarning)
-        if not self.emotion_instructions:
-            warnings.warn(
-                "Warning: 'emotion_instructions' is not provided.", UserWarning
-            )
-        return shots
-
     def system2attenton(self, input_text):
         """
         Makes an LLM rewrite the prompt by removing any info unrelated to the user's question.
         https://arxiv.org/abs/2311.11829
         """
         messages = System2AttentionSystemPrompt(
-            additional_information=self.additional_information
+            additional_information=self.additional_information, input_text=input_text
         ).messages
         self.additional_information = llm_call(messages=messages)
 
