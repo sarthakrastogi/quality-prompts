@@ -1,55 +1,43 @@
 # Write Quality Prompts
-## Use and evaluate prompting techniques [surveyed by Openai and Microsoft](https://arxiv.org/pdf/2406.06608) quickly.
+## Use and evaluate prompting techniques quickly.
+
+QualityPrompts implements 58 prompting techniques explained in [this survey from OpenAI, Microsoft, et al.](https://arxiv.org/pdf/2406.06608) 
 
 ### 1. Install Quality Prompts:
 
 `pip install quality-prompts`
 
-### 2. Write down few-shot examples:
+### 2. Write the components of your prompt
 
 ```
 from quality_prompts.prompt import QualityPrompt
-from quality_prompts.exemplars import ExemplarStore, Exemplar
-from quality_prompts.utils.llm import get_embedding
 
-exemplars = [Exemplar(input="Cardiovascular disease (CVD) encompasses..."
-                      label="[{"entity": "cardiovascular disease (cvd)..."
-                      input_embedding=[-0.008424, 0.097374, ...]
-                     ),
-                     ...
-            ]
-exemplar_store = ExemplarStore(exemplars=exemplars)
-```
-
-### 3. Write the components of your prompt
-
-```
 directive = "You are given a document and your task..."
-additional_information = "In the knowledge graph, entities..."
-output_formatting = "You will respond with a knowledge graph in the given JSON"
+additional_information = "In the knowledge graph, ..."
+output_formatting = "You will respond with a knowledge graph in..."
 
 prompt = QualityPrompt(
-                        directive=directive,
-                        additional_information=additional_information,
-                        output_formatting=output_formatting,
-                        exemplar_store=exemplar_store
+                        directive,
+                        additional_information,
+                        output_formatting,
+                        exemplar_store
                        )
 ```
 
-### 4. Effortlessly add few-shot examples to your prompt.
+### 3. QualityPrompts searches and uses only the few-shot examples that are relevant to the user's query
 
 ```
 input_text = "list the disorders included in cvd"
-prompt.few_shot(input_text=input_text, n_shots=2)
+prompt.few_shot(input_text=input_text, n_shots=1)
 ```
 
-### 5. Simply call a prompting technique to your prompt
+### 4. Simply call a prompting technique to your prompt
 
 ```
 prompt.system2attention(input_text)
 ```
 
-### 6. Compile your prompt to use it
+### 5. Compile your prompt for use
 
 ```
 print(prompt.compile())
@@ -64,7 +52,6 @@ Whereas the relationships and actions between them are represented as edges.
 Example input: Cardiovascular disease (CVD) encompasses a spectrum of...
 Example output: [{'entity': 'cardiovascular disease (cvd)', 'connections': ...
 
-Example input: The epidemiological burden of cardiovascular disease underscores ...
 You will respond with a knowledge graph in the given JSON format:
 
 [
@@ -75,3 +62,9 @@ You will respond with a knowledge graph in the given JSON format:
     },
 ]
 ```
+
+### 6. Upcoming: Easily evaluate different prompting techniques
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=sarthakrastogi/quality-prompts&type=Date)](https://star-history.com/#sarthakrastogi/quality-prompts&Date)

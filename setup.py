@@ -10,6 +10,6 @@ setup(
     long_description=readme_content,
     long_description_content_type="text/markdown",
     install_requires=[
-        "litellm==1.34.0",
+        "litellm==1.41.8",
     ],
 )
