@@ -1,9 +1,11 @@
 from pydantic import BaseModel
 import warnings
 from typing import List
+import json
 
 from .utils.llm import llm_call
 from .exemplars import ExemplarStore, Exemplar
+from utils.prompting_techniques_system_prompts import *
 
 
 class QualityPrompt(BaseModel):
@@ -57,14 +59,24 @@ class QualityPrompt(BaseModel):
         Makes an LLM rewrite the prompt by removing any info unrelated to the user's question.
         https://arxiv.org/abs/2311.11829
         """
-        pass  # TODO
+        messages = System2AttentionSystemPrompt(
+            additional_information=self.additional_information
+        ).messages
+        self.additional_information = llm_call(messages=messages)
 
     def sim_to_M(self, input_text):
         """
         Establishes the known facts
         https://arxiv.org/abs/2311.10227
         """
-        pass
+        messages = SimtoMCharacterExtractionSystemPrompt(input_text=input_text).messages
+        character_name = llm_call(messages=messages)
+
+        messages = SimtoMSystemPrompt(
+            additional_information=self.additional_information,
+            character_name=character_name,
+        ).messages
+        self.additional_information = llm_call(messages=messages)
 
     def rephrase_and_respond(self, input_text, perform_in="same_pass"):
         """
@@ -86,9 +98,29 @@ class QualityPrompt(BaseModel):
         """
         input_text += "Read the question again:" + input_text
 
-    def self_ask(self, input_text):
+    def self_ask(self, input_text, allow_search_engine=False):
         """
         Prompts the LLM to first ask any follow-up questions if needed
         http://arxiv.org/abs/2210.03350
         """
-        pass
+        messages = SelfAskSystemPrompt(
+            input_text=input_text, additional_information=self.additional_information
+        ).messages
+        response = llm_call(messages=messages)
+        if "FALSE" in response:
+            pass
+        else:
+            follow_up_questions = json.loads(response)
+            for follow_up_question in follow_up_questions:
+                if allow_search_engine:
+                    pass  # TODO
+                else:
+                    messages = [
+                        {"role": "system", "content": self.additional_information},
+                        {"role": "user", "content": follow_up_question},
+                    ]
+                    follow_up_question_answer = llm_call(messages=messages)
+
+                self.additional_information += f"""Question: {follow_up_question}
+                                                   Answer: {follow_up_question_answer}
+                                                """
