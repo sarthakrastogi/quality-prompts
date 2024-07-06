@@ -5,7 +5,7 @@ with open("README.MD", "r") as f:
 
 setup(
     name="quality-prompts",
-    version="0.0.1",
+    version="0.0.2",
     packages=find_packages(),
     long_description=readme_content,
     long_description_content_type="text/markdown",
