@@ -86,3 +86,5 @@ Respond in the following markdown table format for each step:
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=sarthakrastogi/quality-prompts&type=Date)](https://star-history.com/#sarthakrastogi/quality-prompts&Date)
+
+To stay updated on the latest features and prompting techniques added to the library, you can star this repo.
