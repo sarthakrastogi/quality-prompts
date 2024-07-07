@@ -31,15 +31,13 @@ input_text = "list the disorders included in cvd"
 prompt.few_shot(input_text=input_text, n_shots=1)
 ```
 
-### 4. Simply call a prompting technique to your prompt
+### 4. Simply call one of several prompting techniques to your prompt
+
+##### System2Attention
+Helps clarify the given context as an additinoal step before it's used to answer the question
 
 ```
 prompt.system2attention(input_text)
-```
-
-### 5. Compile your prompt for use
-
-```
 print(prompt.compile())
 ```
 
@@ -61,6 +59,26 @@ You will respond with a knowledge graph in the given JSON format:
         ]
     },
 ]
+```
+
+#### Tabular Chain of Thought Prompting
+Prompts the LLM to think step by step and write the step, process and result of each step in a markdown table.
+Significantly boosts accuracy in solving math problems.
+```
+prompt.tabular_chain_of_thought_prompting(input_text=input_text)
+print(prompt.compile())
+```
+
+```
+Solve the given math problem.
+Think through the problem step by step to solve it.
+At each step, you have to figure out:
+- the step number,
+- the sub-question to be answered in that step,
+- the thought process of solving that step, and
+- the result of solving that step.
+Respond in the following markdown table format for each step:
+|step|subquestion|process|result|    
 ```
 
 ### 6. Upcoming: Easily evaluate different prompting techniques

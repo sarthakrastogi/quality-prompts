@@ -10,8 +10,8 @@ from .utils.prompting_techniques_system_prompts import *
 
 class QualityPrompt(BaseModel):
     directive: str  # Core intent of the prompt
-    output_formatting: str
-    additional_information: str
+    output_formatting: str = ""
+    additional_information: str = ""
     style_instructions: str = ""
     role_instructions: str = ""
     emotion_instructions: str = ""
@@ -25,7 +25,6 @@ class QualityPrompt(BaseModel):
                 for e in self.few_shot_examples
             ]
         )
-
         return f"""{self.directive}
         {self.additional_information}
         {formatted_examples}
@@ -112,3 +111,66 @@ class QualityPrompt(BaseModel):
                 self.additional_information += f"""Question: {follow_up_question}
                                                    Answer: {follow_up_question_answer}
                                                 """
+
+    def step_back_prompting(self, input_text):
+        """
+        Prompts the LLM to first generate generic questions about facts/concepts used to answer the question, before answering.
+        https://arxiv.org/pdf/2310.06117
+        """
+        messages = StepBackPromptingSystemPrompt(
+            input_text=input_text, additional_information=self.additional_information
+        ).messages
+        step_back_question = llm_call(messages=messages)
+
+        messages = [
+            {"role": "system", "content": self.additional_information},
+            {"role": "user", "content": step_back_question},
+        ]
+        step_back_answer = llm_call(messages=messages)
+
+        self.additional_information += f"""Question: {step_back_question}
+                                            Answer: {step_back_answer}
+                                        """
+
+    def analogical_prompting(self, input_text):
+        """
+        Prompts the LLM to generate three distinct questions (along with solutions) with are similar to the user's query, and then finally solve the user's query.
+        https://arxiv.org/pdf/2310.01714
+        """
+        analogical_prompting_system_prompt = AnalogicalPromptingSystemPrompt(
+            input_text=input_text, directive=self.directive
+        )
+        self.directive, self.output_formatting = (
+            analogical_prompting_system_prompt.updated_directive,
+            analogical_prompting_system_prompt.updated_output_formatting,
+        )
+
+    def thread_of_thought_prompting(self, input_text):
+        """
+        Prompts the LLM to first analyse and summarise and additional information / context step by step, before answering.
+        https://arxiv.org/pdf/2311.08734
+        """
+        thread_of_thought_context_summarisation_messages = (
+            ThreadOfThoughtPromptingSystemPrompt(
+                additional_information=self.additional_information
+            ).context_summarisation_system_prompt
+        ).context_summarisation_messages
+
+        self.additional_information = llm_call(
+            messages=thread_of_thought_context_summarisation_messages
+        )
+
+    def tabular_chain_of_thought_prompting(self, input_text):
+        """
+        Prompts the LLM to think step by step and write the step, process and result of each step in a markdown table
+        https://arxiv.org/pdf/2305.17812
+        """
+        tabcot_prompting_system_prompt = TabularChainOfThoughtPrompingSystemPrompt(
+            input_text=input_text,
+            directive=self.directive,
+            output_formatting=self.output_formatting,
+        )
+        self.directive, self.output_formatting = (
+            tabcot_prompting_system_prompt.updated_directive,
+            tabcot_prompting_system_prompt.updated_output_formatting,
+        )
