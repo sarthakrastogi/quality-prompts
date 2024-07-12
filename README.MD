@@ -1,7 +1,7 @@
-# Write Quality Prompts
+# Quality Prompts
 ## Use and evaluate prompting techniques quickly.
 
-QualityPrompts implements 58 prompting techniques explained in [this survey from OpenAI, Microsoft, et al.](https://arxiv.org/pdf/2406.06608) 
+Quality Prompts implements 58 prompting techniques explained in [this survey from OpenAI, Microsoft, et al.](https://arxiv.org/pdf/2406.06608) 
 
 ### 1. Install Quality Prompts:
 
@@ -24,7 +24,7 @@ prompt = QualityPrompt(
                        )
 ```
 
-### 3. QualityPrompts searches and uses only the few-shot examples that are relevant to the user's query
+### 3. Quality Prompts searches and uses only the few-shot examples that are relevant to the user's query
 
 ```
 input_text = "list the disorders included in cvd"

@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import List, Dict
 
+from exemplars import Exemplar
+
 
 class System2AttentionSystemPrompt(BaseModel):
     # Source: Page 4 of https://arxiv.org/pdf/2311.11829 -- only paragraph 1 of their prompt is used
@@ -188,3 +190,37 @@ class TabularChainOfThoughtPrompingSystemPrompt(BaseModel):
         Respond in the following markdown table format for each step:
         |step|subquestion|process|result|
     """
+
+
+class ContrastiveCoTSystemPrompt(BaseModel):
+    # Source: improvised by @sarthakrastogi
+    directive: str
+    additional_information: str
+    exemplar: Exemplar
+
+    @property
+    def valid_and_invalid_exemplar_pair_generation_messages(self) -> str:
+        valid_and_invalid_exemplar_pair_generation_system_prompt = f"""
+        You will be given an example used by them in an LLM prompt.
+        Your task is to generate two examples for how the LLM should reason about solving the example.
+        You will generate:
+        - one valid example showing the correct reasoning for the LLM to solve that example prompt, and
+        - one invalid example showing the incorrect reasoning that the LLM might mistakenly use to arrive at an incorrect answer.
+        These two examples will be used to teach the LLM how to and how not to answer a given question.
+        These are the directive of the problem and the given example.
+        """
+        directive_and_exemplar_user_prompt = f"""Directive: {self.directive}
+        Example: {self.exemplar}
+        """
+
+        messages = [
+            {
+                "role": "system",
+                "content": valid_and_invalid_exemplar_pair_generation_system_prompt,
+            },
+            {
+                "role": "user",
+                "content": directive_and_exemplar_user_prompt,
+            },
+        ]
+        return messages

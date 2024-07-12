@@ -41,6 +41,7 @@ class QualityPrompt(BaseModel):
         else:
             self.few_shot_examples = self.exemplar_store.exemplars
 
+    # ZERO-SHOT PROMPTING TECHNIQUES
     def system2attenton(self, input_text):
         """
         Makes an LLM rewrite the prompt by removing any info unrelated to the user's question.
@@ -112,6 +113,11 @@ class QualityPrompt(BaseModel):
                                                    Answer: {follow_up_question_answer}
                                                 """
 
+    # THOUGHT GENERATION
+    def chain_of_thought_prompting(self, input_text):
+        pass
+
+    # ZERO-SHOT CoT
     def step_back_prompting(self, input_text):
         """
         Prompts the LLM to first generate generic questions about facts/concepts used to answer the question, before answering.
@@ -174,3 +180,36 @@ class QualityPrompt(BaseModel):
             tabcot_prompting_system_prompt.updated_directive,
             tabcot_prompting_system_prompt.updated_output_formatting,
         )
+
+    # FEW-SHOT CoT
+    def contrastive_cot_prompting(self, input_text):
+        """
+        Adds exemplars with both correct and incorrect thoughts to show both how to and how not to think.
+        https://arxiv.org/pdf/2311.09277
+        """
+        self.few_shot(input_text=input_text, n_shots=1)
+        selected_few_shot_example = self.few_shot_examples[0]
+
+        valid_and_invalid_exemplar_pair_generation_messages = (
+            ContrastiveCoTSystemPrompt(
+                directive=self.directive,
+                additional_information=self.additional_information,
+                exemplar=selected_few_shot_example,
+            )
+        )
+        valid_and_invalid_exemplar_pair = llm_call(
+            messages=valid_and_invalid_exemplar_pair_generation_messages
+        )
+        exemplar = Exemplar(
+            input=selected_few_shot_example.input,
+            label=valid_and_invalid_exemplar_pair,
+            input_embedding=selected_few_shot_example.input_embedding,
+        )
+        self.few_shot_examples = [exemplar]
+
+    def uncertainty_routed_cot_prompting(self, input_text):
+        """
+        Samples multiple CoT reasoning paths, then selects the majority if it is above a certain threshold (calculated based on validation data). If not, it samples greedily and selects that response
+        https://storage.googleapis.com/deepmind-media/gemini/gemini_1_report.pdf
+        """
+        pass
