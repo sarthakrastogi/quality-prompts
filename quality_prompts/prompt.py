@@ -4,7 +4,7 @@ from typing import List
 import json
 
 from .exemplars import ExemplarStore, Exemplar
-from .utils.llm import llm_call
+from .utils.llm import llm_call, llm_call_multiple_choices, get_embedding
 from .utils.prompting_techniques_system_prompts import *
 
 
@@ -42,7 +42,7 @@ class QualityPrompt(BaseModel):
             self.few_shot_examples = self.exemplar_store.exemplars
 
     # ZERO-SHOT PROMPTING TECHNIQUES
-    def system2attenton(self, input_text):
+    def system2attention(self, input_text):
         """
         Makes an LLM rewrite the prompt by removing any info unrelated to the user's question.
         https://arxiv.org/abs/2311.11829
@@ -114,8 +114,13 @@ class QualityPrompt(BaseModel):
                                                 """
 
     # THOUGHT GENERATION
-    def chain_of_thought_prompting(self, input_text):
-        pass
+    def chain_of_thought_prompting(self):
+        """
+        https://arxiv.org/pdf/2201.11903
+        """
+        chain_of_thought_system_prompt = ChainOfThoughtSystemPrompt().system_prompt
+        self.output_formatting = f"""{chain_of_thought_system_prompt}
+        {self.output_formatting}"""
 
     # ZERO-SHOT CoT
     def step_back_prompting(self, input_text):
@@ -207,9 +212,37 @@ class QualityPrompt(BaseModel):
         )
         self.few_shot_examples = [exemplar]
 
-    def uncertainty_routed_cot_prompting(self, input_text):
+    def uncertainty_routed_cot_prompting(
+        self, input_text, n_reasoning_paths=5, temperature=0.4
+    ):
         """
         Samples multiple CoT reasoning paths, then selects the majority if it is above a certain threshold (calculated based on validation data). If not, it samples greedily and selects that response
         https://storage.googleapis.com/deepmind-media/gemini/gemini_1_report.pdf
         """
-        pass
+        self.chain_of_thought_prompting()
+        prompt_with_cot = self.compile()
+        messages = [
+            {"role": "system", "content": prompt_with_cot},
+            {"role": "user", "content": input_text},
+        ]
+        cot_reasoning_paths = llm_call_multiple_choices(
+            messages=messages, n=n_reasoning_paths, temperature=temperature
+        )
+
+        # NOW VOTE MAJORITY FROM THESE PATH
+
+        search_majority_reasoning_path_messages = UncertaintyRoutedCoTSystemPrompt(
+            directive=self.directive,
+            additional_information=self.additional_information,
+            cot_reasoning_paths=cot_reasoning_paths,
+        ).search_majority_reasoning_path_messages
+
+        majority_reasoning_path = llm_call(
+            messages=search_majority_reasoning_path_messages
+        )
+        exemplar = Exemplar(
+            input=input_text,
+            label=majority_reasoning_path,
+            input_embedding=get_embedding(input_text),
+        )
+        self.few_shot_examples = [exemplar]

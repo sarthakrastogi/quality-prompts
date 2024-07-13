@@ -102,6 +102,13 @@ class SelfAskSystemPrompt(BaseModel):
         ]
 
 
+class ChainOfThoughtSystemPrompt(BaseModel):
+    # Source: https://arxiv.org/abs/2211.01910
+    system_prompt: str = (
+        """Let's work this out it a step by step to be sure we have the right answer."""
+    )
+
+
 class StepBackPromptingSystemPrompt(BaseModel):
     # Source: Written by @sarthakrastogi
     input_text: str
@@ -224,3 +231,36 @@ class ContrastiveCoTSystemPrompt(BaseModel):
             },
         ]
         return messages
+
+
+class UncertaintyRoutedCoTSystemPrompt(BaseModel):
+    # Source: improvised by @sarthakrastogi
+    directive: str
+    additional_information: str
+    cot_reasoning_paths: List[str]
+
+    @property
+    def search_majority_reasoning_path_messages(self) -> str:
+        search_majority_reasoning_path_system_prompt = f"""
+        You will be given a list of reasoning paths taken by an LLM to answer a given directive.
+        Your task is to read all reasoning paths carefully and perform majority voting to identify the path used most often.
+        Your response will contain only the one winning reasoning path and the answer computed by using it.
+        """
+        directive_and_reasoning_paths_user_prompt = f"""Directive: {self.directive}
+        Additional Information: {self.additional_information}
+        """
+        for i, reasoning_path in enumerate(self.cot_reasoning_paths):
+            directive_and_reasoning_paths_user_prompt += f"""Reasoning path {i+1}:
+            {reasoning_path}
+            """
+
+        return [
+            {
+                "role": "system",
+                "content": search_majority_reasoning_path_system_prompt,
+            },
+            {
+                "role": "user",
+                "content": directive_and_reasoning_paths_user_prompt,
+            },
+        ]
