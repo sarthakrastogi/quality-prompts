@@ -1,6 +1,7 @@
 [
     {
         "input": "Cardiovascular disease (CVD) encompasses a spectrum of disorders involving the heart and vasculature, prominently including atherosclerosis, characterized by endothelial dysfunction and the accumulation of lipid-laden plaques. These pathophysiological processes often precipitate myocardial infarction and cerebrovascular accidents, arising from the rupture of vulnerable plaques and subsequent thrombogenesis.",
+        "complexity_level": "high",
         "label": [
             {
                 "entity": "cardiovascular disease (cvd)",
@@ -64,6 +65,7 @@
     },
     {
         "input": "Management of cardiovascular disease necessitates a multifaceted approach involving antihypertensive agents, statins to modulate dyslipidemia, and antiplatelet therapy to mitigate thrombosis risk.",
+        "complexity_level": "low",
         "label": [
             {
                 "entity": "cardiovascular disease",
@@ -86,6 +88,7 @@
     },
     {
         "input": "Emerging therapeutic interventions targeting molecular pathways, including PCSK9 inhibitors and SGLT2 inhibitors, show promise in reducing cardiovascular morbidity and mortality.",
+        "complexity_level": "medium",
         "label": [
             {
                 "entity": "therapeutic interventions",
@@ -117,6 +120,7 @@
     },
     {
         "input": "The epidemiological burden of cardiovascular disease underscores the imperative for ongoing research into genetic predispositions and the optimization of primary and secondary prevention strategies.Cardiovascular disease also significantly intersects with metabolic syndrome, wherein insulin resistance and visceral adiposity contribute to endothelial dysfunction and systemic inflammation, further accelerating atherogenic processes.",
+        "complexity_level": "medium",
         "label": [
             {
                 "entity": "cardiovascular disease",
@@ -148,6 +152,7 @@
     },
     {
         "input": "Advanced imaging techniques, such as coronary artery calcium scoring and carotid intima-media thickness measurement, enhance the stratification of cardiovascular risk, enabling more tailored therapeutic interventions.",
+        "complexity_level": "medium",
         "label": [
             {
                 "entity": "advanced imaging techniques",
@@ -175,6 +180,7 @@
     },
     {
         "input": "Role of novel biomarkers, including high-sensitivity troponins and natriuretic peptides, is pivotal in the early detection and prognostication of acute coronary syndromes and heart failure within the broader spectrum of cardiovascular disease.",
+        "complexity_level": "high",
         "label": [
             {
                 "entity": "novel biomarkers",

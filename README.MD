@@ -3,6 +3,8 @@
 
 Quality Prompts implements 58 prompting techniques explained in [this survey from OpenAI, Microsoft, et al.](https://arxiv.org/pdf/2406.06608) 
 
+![Quality Prompts](assets/big_dipper_design.jpg)
+
 ### 1. Install Quality Prompts:
 
 `pip install quality-prompts`
