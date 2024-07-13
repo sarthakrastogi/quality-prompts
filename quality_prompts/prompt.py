@@ -31,11 +31,13 @@ class QualityPrompt(BaseModel):
         {self.output_formatting}
         """
 
-    def few_shot(self, input_text, n_shots=3):
+    def few_shot(self, input_text, n_shots=3, prioritise_complex_exemplars=False):
         if len(self.exemplar_store.exemplars) > n_shots:
             self.few_shot_examples = (
                 self.exemplar_store.get_similar_exemplars_to_test_sample(
-                    input_text=input_text, k=n_shots
+                    input_text=input_text,
+                    k=n_shots,
+                    prioritise_complex_exemplars=prioritise_complex_exemplars,
                 )
             )
         else:
@@ -219,6 +221,7 @@ class QualityPrompt(BaseModel):
         Samples multiple CoT reasoning paths, then selects the majority if it is above a certain threshold (calculated based on validation data). If not, it samples greedily and selects that response
         https://storage.googleapis.com/deepmind-media/gemini/gemini_1_report.pdf
         """
+        # Step 1: Generate n reasoning paths using an LLM
         self.chain_of_thought_prompting()
         prompt_with_cot = self.compile()
         messages = [
@@ -229,14 +232,59 @@ class QualityPrompt(BaseModel):
             messages=messages, n=n_reasoning_paths, temperature=temperature
         )
 
-        # NOW VOTE MAJORITY FROM THESE PATH
+        # Step 2: Do majority voting on these reasoning paths
+        search_majority_reasoning_path_messages = (
+            SearchMajorityReasoningPathSystemPrompt(
+                directive=self.directive,
+                additional_information=self.additional_information,
+                cot_reasoning_paths=cot_reasoning_paths,
+                exemplars=[],
+            ).messages
+        )
+        majority_reasoning_path = llm_call(
+            messages=search_majority_reasoning_path_messages
+        )
+        exemplar = Exemplar(
+            input=input_text,
+            label=majority_reasoning_path,
+            input_embedding=get_embedding(input_text),
+        )
+        self.few_shot_examples = [exemplar]
 
-        search_majority_reasoning_path_messages = UncertaintyRoutedCoTSystemPrompt(
-            directive=self.directive,
-            additional_information=self.additional_information,
-            cot_reasoning_paths=cot_reasoning_paths,
-        ).search_majority_reasoning_path_messages
+    def complexity_based_prompting(
+        self, input_text, n_reasoning_paths=5, temperature=0.4, n_exemplars=3
+    ):
+        """
+        First searches the most complex exemplars for use in context.
+        Then samples multiple CoT reasoning paths, then selects the majority if it is above a certain threshold (calculated based on validation data). If not, it samples greedily and selects that response
+        https://openreview.net/pdf?id=yf1icZHC-l9
+        """
+        # Step 1: Search complex exemplars
+        self.few_shot(
+            input_text=input_text,
+            n_shots=n_exemplars,
+            prioritise_complex_exemplars=True,
+        )
+        # Step 2: Generate n reasoning paths using an LLM
+        self.chain_of_thought_prompting()
+        prompt_with_cot = self.compile()
+        messages = [
+            {"role": "system", "content": prompt_with_cot},
+            {"role": "user", "content": input_text},
+        ]
+        cot_reasoning_paths = llm_call_multiple_choices(
+            messages=messages, n=n_reasoning_paths, temperature=temperature
+        )
 
+        # Step 3: Do majority voting on these reasoning paths
+        search_majority_reasoning_path_messages = (
+            SearchMajorityReasoningPathSystemPrompt(
+                directive=self.directive,
+                additional_information=self.additional_information,
+                cot_reasoning_paths=cot_reasoning_paths,
+                exemplars=[],
+            ).messages
+        )
         majority_reasoning_path = llm_call(
             messages=search_majority_reasoning_path_messages
         )

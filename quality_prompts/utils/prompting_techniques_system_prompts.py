@@ -170,8 +170,7 @@ class ThreadOfThoughtPromptingSystemPrompt(BaseModel):
     def context_summarisation_messages(self) -> str:
         context_summarisation_system_prompt = f"""{self.additional_information}
         Walk me through this context in manageable parts step by step, summarizing and analyzing as we go."""
-        messages = [{"role": "system", "content": context_summarisation_system_prompt}]
-        return messages
+        return [{"role": "system", "content": context_summarisation_system_prompt}]
 
 
 class TabularChainOfThoughtPrompingSystemPrompt(BaseModel):
@@ -220,7 +219,7 @@ class ContrastiveCoTSystemPrompt(BaseModel):
         Example: {self.exemplar}
         """
 
-        messages = [
+        return [
             {
                 "role": "system",
                 "content": valid_and_invalid_exemplar_pair_generation_system_prompt,
@@ -230,17 +229,17 @@ class ContrastiveCoTSystemPrompt(BaseModel):
                 "content": directive_and_exemplar_user_prompt,
             },
         ]
-        return messages
 
 
-class UncertaintyRoutedCoTSystemPrompt(BaseModel):
+class SearchMajorityReasoningPathSystemPrompt(BaseModel):
     # Source: improvised by @sarthakrastogi
     directive: str
     additional_information: str
     cot_reasoning_paths: List[str]
+    exemplars: List[Exemplar]
 
     @property
-    def search_majority_reasoning_path_messages(self) -> str:
+    def messages(self) -> str:
         search_majority_reasoning_path_system_prompt = f"""
         You will be given a list of reasoning paths taken by an LLM to answer a given directive.
         Your task is to read all reasoning paths carefully and perform majority voting to identify the path used most often.
@@ -249,11 +248,15 @@ class UncertaintyRoutedCoTSystemPrompt(BaseModel):
         directive_and_reasoning_paths_user_prompt = f"""Directive: {self.directive}
         Additional Information: {self.additional_information}
         """
+        for i, exemplar in enumerate(self.exemplars):
+            search_majority_reasoning_path_system_prompt += f"""Example {str(i+1)}:
+            Input: {exemplar.input}
+            Output: {exemplar.label}
+            """
         for i, reasoning_path in enumerate(self.cot_reasoning_paths):
-            directive_and_reasoning_paths_user_prompt += f"""Reasoning path {i+1}:
+            directive_and_reasoning_paths_user_prompt += f"""Reasoning path {str(i+1)}:
             {reasoning_path}
             """
-
         return [
             {
                 "role": "system",
