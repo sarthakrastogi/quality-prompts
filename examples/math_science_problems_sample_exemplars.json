@@ -1,0 +1,62 @@
+[
+    {
+        "input": "Solve the integral \\( \\int (3x^2 - 2x + 1) \\, dx \\).",
+        "label": "To solve the integral \\( \\int (3x^2 - 2x + 1) \\, dx \\), we need to integrate each term separately.\n1. \\( \\int 3x^2 \\, dx = 3 \\int x^2 \\, dx = 3 \\cdot \\frac{x^3}{3} = x^3 \\)\n2. \\( \\int -2x \\, dx = -2 \\int x \\, dx = -2 \\cdot \\frac{x^2}{2} = -x^2 \\)\n3. \\( \\int 1 \\, dx = x \\)\nCombining these results, we get:\n\\( \\int (3x^2 - 2x + 1) \\, dx = x^3 - x^2 + x + C \\), where \\(C\\) is the constant of integration.",
+        "complexity_level": "low"
+    },
+    {
+        "input": "Calculate the molarity of a solution prepared by dissolving 5 grams of NaCl in 250 mL of water.",
+        "label": "To calculate the molarity, we first need to find the number of moles of NaCl. The molar mass of NaCl is approximately 58.44 g/mol.\nNumber of moles = \\( \\frac{5 \\text{ g}}{58.44 \\text{ g/mol}} = 0.0856 \\text{ mol} \\)\nNext, we convert the volume from mL to L: 250 mL = 0.250 L.\nMolarity (M) = \\( \\frac{0.0856 \\text{ mol}}{0.250 \\text{ L}} = 0.3424 \\text{ M} \\)\nTherefore, the molarity of the solution is 0.3424 M.",
+        "complexity_level": "medium"
+    },
+    {
+        "input": "A block of mass 5 kg is pushed up a frictionless incline of 30 degrees with an initial velocity of 10 m/s. Calculate the distance the block travels up the incline before coming to a stop.",
+        "label": "To solve this problem, we use the principles of energy conservation. Initially, the block has kinetic energy given by \\( KE = \\frac{1}{2} m v^2 \\).\n\\( KE = \\frac{1}{2} \\times 5 \\text{ kg} \\times (10 \\text{ m/s})^2 = 250 \\text{ J} \\)\nAs the block travels up the incline, it gains potential energy, which is given by \\( PE = mgh \\). The height \\( h \\) can be related to the distance \\( d \\) up the incline by \\( h = d \\sin(30^\\circ) = \\frac{d}{2} \\).\nSetting the initial kinetic energy equal to the potential energy at the stopping point:\n\\( 250 \\text{ J} = 5 \\text{ kg} \\times 9.8 \\text{ m/s}^2 \\times \\frac{d}{2} \\)\nSolving for \\( d \\):\n\\( 250 = 24.5d \\implies d = \\frac{250}{24.5} = 10.2 \\text{ m} \\)\nTherefore, the block travels 10.2 meters up the incline before coming to a stop.",
+        "complexity_level": "high"
+    },
+    {
+        "input": "Find the roots of the quadratic equation \\( 2x^2 - 4x + 1 = 0 \\).",
+        "label": "To find the roots of the quadratic equation \\( 2x^2 - 4x + 1 = 0 \\), we use the quadratic formula \\( x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\), where \\( a = 2 \\), \\( b = -4 \\), and \\( c = 1 \\).\n\\( x = \\frac{-(-4) \\pm \\sqrt{(-4)^2 - 4 \\cdot 2 \\cdot 1}}{2 \\cdot 2} \\)\n\\( x = \\frac{4 \\pm \\sqrt{16 - 8}}{4} \\)\n\\( x = \\frac{4 \\pm \\sqrt{8}}{4} \\)\n\\( x = \\frac{4 \\pm 2\\sqrt{2}}{4} \\)\n\\( x = 1 \\pm \\frac{\\sqrt{2}}{2} \\)\nTherefore, the roots of the equation are \\( x = 1 + \\frac{\\sqrt{2}}{2} \\) and \\( x = 1 - \\frac{\\sqrt{2}}{2} \\).",
+        "complexity_level": "medium"
+    },
+    {
+        "input": "Determine the pH of a 0.01 M HCl solution.",
+        "label": "HCl is a strong acid, which dissociates completely in water. Therefore, the concentration of hydrogen ions \\( [H^+] \\) in the solution is equal to the concentration of the HCl solution, which is 0.01 M.\nThe pH of a solution is calculated using the formula \\( \\text{pH} = -\\log[H^+] \\).\n\\( \\text{pH} = -\\log(0.01) = -\\log(10^{-2}) = 2 \\)\nTherefore, the pH of the 0.01 M HCl solution is 2.",
+        "complexity_level": "low"
+    },
+    {
+        "input": "A particle is moving in a circle of radius 5 m with a constant speed of 10 m/s. Calculate the centripetal acceleration of the particle.",
+        "label": "The centripetal acceleration \\( a_c \\) of a particle moving in a circle with radius \\( r \\) and speed \\( v \\) is given by the formula \\( a_c = \\frac{v^2}{r} \\).\nGiven: \\( v = 10 \\text{ m/s} \\) and \\( r = 5 \\text{ m} \\).\n\\( a_c = \\frac{(10 \\text{ m/s})^2}{5 \\text{ m}} = \\frac{100}{5} = 20 \\text{ m/s}^2 \\)\nTherefore, the centripetal acceleration of the particle is 20 \\text{ m/s}^2.",
+        "complexity_level": "low"
+    },
+    {
+        "input": "Evaluate the limit \\( \\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2} \\).",
+        "label": "To evaluate the limit \\( \\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2} \\), we first notice that direct substitution results in a 0/0 indeterminate form. We can factor the numerator:\n\\( \\frac{x^2 - 4}{x - 2} = \\frac{(x - 2)(x + 2)}{x - 2} \\).\nWe can then cancel the \\( x - 2 \\) term in the numerator and the denominator:\n\\( \\frac{(x - 2)(x + 2)}{x - 2} = x + 2 \\) (for \\( x \\neq 2 \\)).\nNow, we can directly substitute \\( x = 2 \\):\n\\( \\lim_{x \\to 2} (x + 2) = 2 + 2 = 4 \\).\nTherefore, the limit is 4.",
+        "complexity_level": "medium"
+    },
+    {
+        "input": "Determine the empirical formula of a compound that contains 40% carbon, 6.7% hydrogen, and 53.3% oxygen by mass.",
+        "label": "To determine the empirical formula, we convert the percentages to moles by dividing by the atomic masses of each element.\n1. Moles of C: \\( \\frac{40 \\text{ g}}{12.01 \\text{ g/mol}} = 3.33 \\text{ mol} \\).\n2. Moles of H: \\( \\frac{6.7 \\text{ g}}{1.008 \\text{ g/mol}} = 6.65 \\text{ mol} \\).\n3. Moles of O: \\( \\frac{53.3 \\text{ g}}{16.00 \\text{ g/mol}} = 3.33 \\text{ mol} \\).\nNext, we divide each mole value by the smallest number of moles:\n1. Moles of C: \\( \\frac{3.33}{3.33} = 1 \\).\n2. Moles of H: \\( \\frac{6.65}{3.33} = 2 \\).\n3. Moles of O: \\( \\frac{3.33}{3.33} = 1 \\).\nTherefore, the empirical formula is CH2O.",
+        "complexity_level": "medium"
+    },
+    {
+        "input": "A 10 kg mass is attached to a spring with a spring constant of 200 N/m. If the mass is displaced 0.1 m from its equilibrium position and released, calculate the maximum velocity of the mass.",
+        "label": "To find the maximum velocity, we use the conservation of mechanical energy. The potential energy stored in the spring at maximum displacement is converted into kinetic energy at the equilibrium position.\nThe potential energy in the spring is given by \\( PE = \\frac{1}{2} k x^2 \\), where \\( k \\) is the spring constant and \\( x \\) is the displacement.\n\\( PE = \\frac{1}{2} \\times 200 \\text{ N/m} \\times (0.1 \\text{ m})^2 = 1 \\text{ J} \\).\nAt the equilibrium position, this potential energy is converted to kinetic energy: \\( KE = \\frac{1}{2} mv^2 \\).\nSetting \\( KE = PE \\):\n\\( \\frac{1}{2} mv^2 = 1 \\text{ J} \\).\n\\( \\frac{1}{2} \\times 10 \\text{ kg} \\times v^2 = 1 \\text{ J} \\).\n\\( 5v^2 = 1 \\implies v^2 = 0.2 \\implies v = \\sqrt{0.2} \\approx 0.447 \\text{ m/s} \\).\nTherefore, the maximum velocity of the mass is approximately 0.447 m/s.",
+        "complexity_level": "high"
+    },
+    {
+        "input": "Find the derivative of the function \\( f(x) = x^3 - 3x^2 + 2x \\).",
+        "label": "To find the derivative of the function \\( f(x) = x^3 - 3x^2 + 2x \\), we apply the power rule to each term.\n1. \\( \\frac{d}{dx} (x^3) = 3x^2 \\).\n2. \\( \\frac{d}{dx} (-3x^2) = -6x \\).\n3. \\( \\frac{d}{dx} (2x) = 2 \\).\nCombining these results, we get:\n\\( f'(x) = 3x^2 - 6x + 2 \\).\nTherefore, the derivative of the function is \\( f'(x) = 3x^2 - 6x + 2 \\).",
+        "complexity_level": "low"
+    },
+    {
+        "input": "What is the final temperature when 50 g of aluminum at 100°C is mixed with 200 g of water at 25°C? (Specific heat capacities: \\( c_{Al} = 0.897 \\text{ J/g°C} \\), \\( c_{H2O} = 4.18 \\text{ J/g°C} \\)).",
+        "label": "To find the final temperature (\\( T_f \\)) when the aluminum and water reach thermal equilibrium, we use the principle of conservation of energy. The heat lost by the aluminum will be equal to the heat gained by the water.\nHeat lost by aluminum: \\( Q_{Al} = m_{Al} c_{Al} (T_{Al} - T_f) \\).\nHeat gained by water: \\( Q_{H2O} = m_{H2O} c_{H2O} (T_f - T_{H2O}) \\).\nSetting \\( Q_{Al} = Q_{H2O} \\):\n\\( 50 \\text{ g} \\times 0.897 \\text{ J/g°C} \\times (100 - T_f) = 200 \\text{ g} \\times 4.18 \\text{ J/g°C} \\times (T_f - 25) \\).\n\\( 44.85 \\times (100 - T_f) = 836 \\times (T_f - 25) \\).\n\\( 4485 - 44.85 T_f = 836 T_f - 20900 \\).\n\\( 4485 + 20900 = 836 T_f + 44.85 T_f \\).\n\\( 25385 = 880.85 T_f \\).\n\\( T_f = \\frac{25385}{880.85} \\approx 28.8°C \\).\nTherefore, the final temperature is approximately 28.8°C.",
+        "complexity_level": "high"
+    },
+    {
+        "input": "Calculate the standard enthalpy change (ΔH°) for the reaction: \\( 2H_2 + O_2 \\rightarrow 2H_2O \\). Given the bond enthalpies: H-H = 436 kJ/mol, O=O = 498 kJ/mol, and O-H = 463 kJ/mol.",
+        "label": "To calculate the standard enthalpy change (ΔH°) for the reaction \\( 2H_2 + O_2 \\rightarrow 2H_2O \\), we use the bond enthalpies of the reactants and products.\nThe reaction involves breaking the bonds in the reactants and forming new bonds in the products.\nBreaking bonds:\n1. 2 moles of H-H bonds: \\( 2 \\times 436 \\text{ kJ/mol} = 872 \\text{ kJ} \\).\n2. 1 mole of O=O bond: \\( 498 \\text{ kJ} \\).\nTotal energy to break bonds: \\( 872 + 498 = 1370 \\text{ kJ} \\).\nForming bonds:\n1. 4 moles of O-H bonds: \\( 4 \\times 463 \\text{ kJ/mol} = 1852 \\text{ kJ} \\).\nThe standard enthalpy change is the difference between the energy required to break the bonds and the energy released when new bonds are formed:\n\\( ΔH° = 1370 \\text{ kJ} - 1852 \\text{ kJ} = -482 \\text{ kJ} \\).\nTherefore, the standard enthalpy change for the reaction is -482 kJ.",
+        "complexity_level": "medium"
+    }
+]

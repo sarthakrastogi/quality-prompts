@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Dict
 
-from exemplars import Exemplar
+from ..exemplars import Exemplar
 
 
 class System2AttentionSystemPrompt(BaseModel):
@@ -205,6 +205,12 @@ class ContrastiveCoTSystemPrompt(BaseModel):
     exemplar: Exemplar
 
     @property
+    def updated_directive(self) -> str:
+        return f"""{self.directive}
+        You are given examples of both valid and invalid reasoning for solving the problem. Observe these examples to understand how to and how not to reason about the problem.
+        """
+
+    @property
     def valid_and_invalid_exemplar_pair_generation_messages(self) -> str:
         valid_and_invalid_exemplar_pair_generation_system_prompt = f"""
         You will be given an example used by them in an LLM prompt.
@@ -215,8 +221,10 @@ class ContrastiveCoTSystemPrompt(BaseModel):
         These two examples will be used to teach the LLM how to and how not to answer a given question.
         These are the directive of the problem and the given example.
         """
+
         directive_and_exemplar_user_prompt = f"""Directive: {self.directive}
-        Example: {self.exemplar}
+        Example:
+        {self.exemplar.label}
         """
 
         return [
@@ -243,15 +251,14 @@ class SearchMajorityReasoningPathSystemPrompt(BaseModel):
         search_majority_reasoning_path_system_prompt = f"""
         You will be given a list of reasoning paths taken by an LLM to answer a given directive.
         Your task is to read all reasoning paths carefully and perform majority voting to identify the path used most often.
-        Your response will contain only the one winning reasoning path and the answer computed by using it.
+        In your respond, you have to explain the winning reasoning path in detail.
         """
         directive_and_reasoning_paths_user_prompt = f"""Directive: {self.directive}
         Additional Information: {self.additional_information}
         """
         for i, exemplar in enumerate(self.exemplars):
             search_majority_reasoning_path_system_prompt += f"""Example {str(i+1)}:
-            Input: {exemplar.input}
-            Output: {exemplar.label}
+            {exemplar.format()}
             """
         for i, reasoning_path in enumerate(self.cot_reasoning_paths):
             directive_and_reasoning_paths_user_prompt += f"""Reasoning path {str(i+1)}:

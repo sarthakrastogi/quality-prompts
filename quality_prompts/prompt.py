@@ -6,6 +6,7 @@ import json
 from .exemplars import ExemplarStore, Exemplar
 from .utils.llm import llm_call, llm_call_multiple_choices, get_embedding
 from .utils.prompting_techniques_system_prompts import *
+from .utils.prompt_postprocessing import *
 
 
 class QualityPrompt(BaseModel):
@@ -25,11 +26,12 @@ class QualityPrompt(BaseModel):
                 for e in self.few_shot_examples
             ]
         )
-        return f"""{self.directive}
+        compiled_prompt = f"""{self.directive}
         {self.additional_information}
         {formatted_examples}
         {self.output_formatting}
         """
+        return remove_extra_chars(compiled_prompt)
 
     def few_shot(self, input_text, n_shots=3, prioritise_complex_exemplars=False):
         if len(self.exemplar_store.exemplars) > n_shots:
@@ -194,16 +196,22 @@ class QualityPrompt(BaseModel):
         Adds exemplars with both correct and incorrect thoughts to show both how to and how not to think.
         https://arxiv.org/pdf/2311.09277
         """
+        # Select the best matching exemplar
         self.few_shot(input_text=input_text, n_shots=1)
         selected_few_shot_example = self.few_shot_examples[0]
 
-        valid_and_invalid_exemplar_pair_generation_messages = (
-            ContrastiveCoTSystemPrompt(
-                directive=self.directive,
-                additional_information=self.additional_information,
-                exemplar=selected_few_shot_example,
-            )
+        # Generate valid and invalid exemplar pair
+        contrastive_cot_system_prompt = ContrastiveCoTSystemPrompt(
+            directive=self.directive,
+            additional_information=self.additional_information,
+            exemplar=selected_few_shot_example,
         )
+
+        valid_and_invalid_exemplar_pair_generation_messages = (
+            contrastive_cot_system_prompt.valid_and_invalid_exemplar_pair_generation_messages
+        )
+        self.directive = contrastive_cot_system_prompt.updated_directive
+
         valid_and_invalid_exemplar_pair = llm_call(
             messages=valid_and_invalid_exemplar_pair_generation_messages
         )
