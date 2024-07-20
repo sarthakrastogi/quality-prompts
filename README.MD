@@ -1,7 +1,7 @@
 # Quality Prompts
 ## Use and evaluate prompting techniques quickly.
 
-Quality Prompts implements 58 prompting techniques explained in [this survey from OpenAI, Microsoft, et al.](https://arxiv.org/pdf/2406.06608) 
+Quality Prompts implements 58 prompting techniques explained in [this survey from the University of Maryland](https://arxiv.org/pdf/2406.06608) in collaboration with researchers from [Learn Prompting](https://learnprompting.org), OpenAI, Microsoft, etc.
 
 ![Quality Prompts](https://raw.githubusercontent.com/sarthakrastogi/quality-prompts/main/assets/big_dipper_design.jpg)
 
