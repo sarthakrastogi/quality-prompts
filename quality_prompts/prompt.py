@@ -193,7 +193,7 @@ class QualityPrompt(BaseModel):
     # FEW-SHOT CoT
     def contrastive_cot_prompting(self, input_text):
         """
-        Adds exemplars with both correct and incorrect thoughts to show both how to and how not to think.
+        Adds exemplars with both valid and invalid reasoning paths to show the LLM both how to and how not to reason about the problem.
         https://arxiv.org/pdf/2311.09277
         """
         # Select the best matching exemplar
@@ -302,3 +302,15 @@ class QualityPrompt(BaseModel):
             input_embedding=get_embedding(input_text),
         )
         self.few_shot_examples = [exemplar]
+
+    def constrained_chain_of_thought_prompting(self, max_words: int = 45):
+        """
+        Adds length constraints to reasoning steps, as an instruction to the prompt.
+        So it's able to maintain both accuracy AND conciseness.
+        https://arxiv.org/pdf/2407.19825
+        """
+        constrained_chain_of_thought_system_prompt = (
+            ConstrainedChainOfThoughtSystemPrompt(max_words=max_words).system_prompt
+        )
+        self.output_formatting = f"""{constrained_chain_of_thought_system_prompt}
+        {self.output_formatting}"""

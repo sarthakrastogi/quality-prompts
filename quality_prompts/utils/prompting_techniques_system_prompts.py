@@ -274,3 +274,12 @@ class SearchMajorityReasoningPathSystemPrompt(BaseModel):
                 "content": directive_and_reasoning_paths_user_prompt,
             },
         ]
+
+
+class ConstrainedChainOfThoughtSystemPrompt(BaseModel):
+    # Source: https://arxiv.org/pdf/2407.19825
+    max_words: int
+
+    @property
+    def system_prompt(self):
+        return f"""Let’s think a bit step by step and limit the answer length to {str(self.max_words)} words."""
